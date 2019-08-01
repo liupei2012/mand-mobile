@@ -18,14 +18,14 @@ describe('Amount - Operation', () => {
     expect(wrapper.vm.isMounted).toBe(true)
   })
 
-  test('Transition - 01', async () => {
-    wrapper = shallowMount({
+  test('should number animation not lose precision', done => {
+    wrapper = mount({
       template: `
           <md-amount
           :value="val"
-          :duration="800"
+          :duration="1000"
           transition
-          ref="mdAmount"
+          ref="amount"
         ></md-amount>
       `,
       components: {
@@ -37,22 +37,17 @@ describe('Amount - Operation', () => {
         }
       },
     })
-    expect(wrapper.vm.val).toBe(1000)
 
-    await wrapper.vm.$nextTick(() => {
-      expect(wrapper.vm.$refs.mdAmount.formatValue).toBe(1000)
-    })
+    const instance = wrapper.vm.$refs.amount
 
-    await wrapper.vm.$nextTick(() => {
-      wrapper.setData({
-        val: 20.66,
-      })
-    })
+    setTimeout(() => {
+      expect(instance.formatValue).toBe(1000)
+      wrapper.vm.val = 20.66
+    }, 2000)
 
-    expect(wrapper.vm.val).toBe(20.66)
-
-    await wrapper.vm.$nextTick(() => {
-      expect(wrapper.vm.$refs.mdAmount).toBe(20.66)
-    })
+    setTimeout(() => {
+      expect(instance.formatValue).toBe(20.66)
+      done()
+    }, 4000)
   })
 })
